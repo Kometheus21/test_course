@@ -1,3 +1,7 @@
+import CartPage from "../../pageObjects/Cart.page";
+import CheckoutComplete from "../../pageObjects/CheckoutComplete.page";
+import CheckoutStepOne from "../../pageObjects/CheckoutStepOne.page";
+import CheckoutStepTwo from "../../pageObjects/CheckoutStepTwo.page";
 import HomePage from "../../pageObjects/Home.page";
 import LoginPage from "../../pageObjects/Login.page";
 
@@ -50,10 +54,28 @@ describe("Saucedemo", () => {
         HomePage.cartBadgeIcon.should("not.exist");
     });
 
-    it.only("6. Open specific item, and validate title", () => {
+    it("6. Open specific item, and validate title", () => {
         LoginPage.logIntoPage("standard_user", "secret_sauce");
         HomePage.itemNames.contains("Backpack").click();
         HomePage.itemName.should("have.text", "Sauce Labs Backpack")
+    });
+
+    it.only("7. Buy Sauce Labs Backpack", () => {
+        LoginPage.logIntoPage("standard_user", "secret_sauce");
+        HomePage.addToCartSauceLabsBackpack.click();
+        HomePage.addToCartBoldTShirt.click();
+        HomePage.cartLink.click();
+        CartPage.itemNames.contains("Backpack")
+        CartPage.itemNames.contains("Bolt T-Shirt")
+        CartPage.itemNames.should("have.length", "2");
+        CartPage.CheckoutLink.click();
+        CheckoutStepOne.firstNameField.type("asdasd");
+        CheckoutStepOne.lastNameField.type("asdcxvdff");
+        CheckoutStepOne.postalCodeField.type("asdzxfbvrqew");
+        CheckoutStepOne.continueButton.click();
+        CheckoutStepTwo.totalCost.should("have.text", "Total: $49.66");
+        CheckoutStepTwo.finishButton.click();
+        CheckoutComplete.completeMessage.should("have.text", "Thank you for your order!");
     });
 });
 
